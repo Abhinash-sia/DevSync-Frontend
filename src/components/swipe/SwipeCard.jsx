@@ -90,7 +90,7 @@ export default function SwipeCard({ profile, onSwipe, isTop = true }) {
                   {profile.name}
                 </h2>
                 <p className="mt-2 text-sm text-white/70">
-                  {(profile.skills || []).slice(0, 3).join(" • ") || "Developer"}
+                  {(profile.skills || []).join(" • ") || "Developer"}
                 </p>
               </div>
 
@@ -127,14 +127,14 @@ export default function SwipeCard({ profile, onSwipe, isTop = true }) {
           <div className="mt-5 grid grid-cols-2 gap-3">
             <button
               type="button"
-              onClick={() => onSwipe("ignore")}
+              onClick={() => triggerSwipe("ignore")}
               className="rounded-[18px] border border-white/8 bg-white/[0.03] px-4 py-3 text-sm text-white/62 transition hover:bg-white/[0.05] hover:text-white"
             >
               Skip
             </button>
             <button
               type="button"
-              onClick={() => onSwipe("interested")}
+              onClick={() => triggerSwipe("interested")}
               className="rounded-[18px] border border-[#12b3a8]/25 bg-[#12b3a8]/10 px-4 py-3 text-sm text-[#9ff7ee] transition hover:bg-[#12b3a8]/16"
             >
               Interested

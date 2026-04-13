@@ -108,7 +108,7 @@ export default function ConnectionsPage() {
                   </h2>
                   <p className="mt-1 text-[10px] text-white/40 font-mono uppercase tracking-widest truncate">
                     {Array.isArray(dev.skills) && dev.skills.length > 0 
-                      ? dev.skills.slice(0, 3).join(" • ") 
+                      ? dev.skills.join(" • ") 
                       : "SYS.DEV"}
                   </p>
                 </div>

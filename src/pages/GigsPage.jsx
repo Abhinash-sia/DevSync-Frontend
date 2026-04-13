@@ -1,12 +1,14 @@
 import { useMemo, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AnimatePresence, motion } from "framer-motion"
-import { BriefcaseBusiness, Plus, X, TerminalSquare, ArrowRight, Code2, CheckCircle, AlertCircle } from "lucide-react"
+import { BriefcaseBusiness, Plus, X, TerminalSquare, ArrowRight, Code2, CheckCircle, AlertCircle, MessageSquare } from "lucide-react"
 import { useApplyGig, useCreateGig, useGigFeed, useMyGigs } from "../hooks/useGigs"
 import SkillInput from "../components/ui/SkillInput"
 import Skeleton from "../components/ui/Skeleton"
+import GigDetailPanel from "../components/gigs/GigDetailPanel"
 
 const gigSchema = z.object({
   title: z.string().min(4, "Title must be at least 4 characters"),
@@ -38,8 +40,9 @@ function GigSkeleton() {
   )
 }
 
+// ─── GigCard ─────────────────────────────────────────────────────────────────
 // ✅ Per-card apply state: applyingId tracks exactly which gig is being applied to
-function GigCard({ gig, onApply, applyingId, appliedIds }) {
+function GigCard({ gig, onApply, applyingId, appliedIds, onClick }) {
   const skills = normalizeSkills(gig?.skills)
   const isApplying = applyingId === gig?._id
   const isApplied = appliedIds.has(gig?._id)
@@ -47,7 +50,8 @@ function GigCard({ gig, onApply, applyingId, appliedIds }) {
   return (
     <motion.article
       whileHover={{ y: -4 }}
-      className="group relative flex flex-col justify-between h-full overflow-hidden rounded-[24px] border border-white/[0.04] bg-[#050505] p-8 transition-colors hover:border-[#12b3a8]/30 hover:bg-[#0a0a0a]"
+      onClick={onClick}
+      className="group relative flex flex-col justify-between h-full overflow-hidden rounded-[24px] border border-white/[0.04] bg-[#050505] p-8 transition-colors hover:border-[#12b3a8]/30 hover:bg-[#0a0a0a] cursor-pointer"
     >
       <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-[#12b3a8]/10 blur-[50px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
@@ -83,33 +87,23 @@ function GigCard({ gig, onApply, applyingId, appliedIds }) {
           </span>
         </div>
 
-        {/* ✅ Applied state shown clearly */}
-        {isApplied ? (
-          <div className="flex items-center gap-2 rounded-xl border border-[#12b3a8]/30 bg-[#12b3a8]/5 px-4 py-2">
-            <CheckCircle size={14} className="text-[#12b3a8]" />
-            <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#12b3a8]">Applied</span>
-          </div>
-        ) : (
-          <button
-            onClick={() => onApply(gig?._id)}
-            disabled={isApplying}
-            className="group/btn flex items-center gap-2 rounded-xl border border-[#12b3a8]/30 bg-[#0a0a0a] px-4 py-2 transition-all hover:border-[#12b3a8] hover:bg-[#12b3a8]/10 hover:shadow-[0_0_15px_rgba(18,179,168,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#12b3a8]">
-              {isApplying ? "Executing..." : "Pull Branch"}
-            </span>
-            {!isApplying && <ArrowRight size={14} className="text-[#12b3a8] transition-transform group-hover/btn:translate-x-1" />}
-          </button>
-        )}
+        {/* Click to open panel hint */}
+        <div className="flex items-center gap-2 font-mono text-[9px] text-white/30 uppercase tracking-widest">
+          <span>View &amp; Comment</span>
+          <ArrowRight size={11} />
+        </div>
       </div>
     </motion.article>
   )
 }
 
-function MyGigCard({ gig, type }) {
+function MyGigCard({ gig, type, onClick }) {
   const skills = normalizeSkills(gig?.skills)
   return (
-    <article className="rounded-[16px] border border-white/[0.04] bg-[#0a0a0a] p-5 transition hover:border-white/10">
+    <article 
+      onClick={onClick}
+      className={`rounded-[16px] border border-white/[0.04] bg-[#0a0a0a] p-5 transition hover:border-white/10 ${onClick ? "cursor-pointer" : ""}`}
+    >
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className={`font-mono text-[10px] uppercase tracking-[0.2em] ${type === "posted" ? "text-purple-500" : "text-[#12b3a8]"} mb-1`}>
@@ -126,6 +120,19 @@ function MyGigCard({ gig, type }) {
           </span>
         ))}
       </div>
+      {/* If this is an applied gig and a chatRoomId exists, show Open Chat */}
+      {type === "applied" && gig?.chatRoomId && (
+        <div className="mt-4 pt-4 border-t border-white/[0.04]">
+          <Link
+            to={`/app/chat/${gig.chatRoomId}`}
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-2 rounded-xl border border-[#12b3a8]/30 bg-[#050505] px-4 py-2.5 transition-all hover:border-[#12b3a8] hover:bg-[#12b3a8]/10 w-fit"
+          >
+            <MessageSquare size={13} className="text-[#12b3a8]" />
+            <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-[#12b3a8]">Open Chat</span>
+          </Link>
+        </div>
+      )}
     </article>
   )
 }
@@ -221,9 +228,11 @@ function CreateGigModal({ open, onClose }) {
 }
 
 export default function GigsPage() {
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState("feed")
   const [selectedSkill, setSelectedSkill] = useState("All")
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedGig, setSelectedGig] = useState(null)
 
   // ✅ Track which gig is currently being applied to (per-card state)
   const [applyingId, setApplyingId] = useState(null)
@@ -257,12 +266,15 @@ export default function GigsPage() {
     setApplyingId(gigId)
     setApplyError(null)
     try {
-      await applyGig.mutateAsync(gigId)
+      const result = await applyGig.mutateAsync(gigId)
       setAppliedIds((prev) => new Set([...prev, gigId]))
+      // Navigate directly into the chatroom with the gig author
+      if (result?.roomId) {
+        navigate(`/app/chat/${result.roomId}`)
+      }
     } catch (err) {
       const msg = err?.response?.data?.message || "Failed to apply. Please try again."
       setApplyError(msg)
-      // Auto-clear error after 4 seconds
       setTimeout(() => setApplyError(null), 4000)
     } finally {
       setApplyingId(null)
@@ -341,6 +353,7 @@ export default function GigsPage() {
                       onApply={handleApply}
                       applyingId={applyingId}
                       appliedIds={appliedIds}
+                      onClick={() => setSelectedGig(gig)}
                     />
                   </motion.div>
                 ))}
@@ -362,7 +375,7 @@ export default function GigsPage() {
                 {myGigs.isLoading
                   ? <Skeleton className="h-24 rounded-[16px] bg-[#0a0a0a] border border-white/5" />
                   : postedGigs.length
-                    ? postedGigs.map(gig => <MyGigCard key={gig._id} gig={gig} type="posted" />)
+                    ? postedGigs.map(gig => <MyGigCard key={gig._id} gig={gig} type="posted" onClick={() => setSelectedGig(gig)} />)
                     : <p className="text-[10px] text-white/20 font-mono uppercase tracking-widest">No entries.</p>}
               </div>
             </section>
@@ -374,7 +387,7 @@ export default function GigsPage() {
                 {myGigs.isLoading
                   ? <Skeleton className="h-24 rounded-[16px] bg-[#0a0a0a] border border-white/5" />
                   : appliedGigs.length
-                    ? appliedGigs.map(gig => <MyGigCard key={gig._id} gig={gig} type="applied" />)
+                    ? appliedGigs.map(gig => <MyGigCard key={gig._id} gig={gig} type="applied" onClick={() => setSelectedGig(gig)} />)
                     : <p className="text-[10px] text-white/20 font-mono uppercase tracking-widest">No entries.</p>}
               </div>
             </section>
@@ -383,6 +396,16 @@ export default function GigsPage() {
       </section>
 
       <CreateGigModal open={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+      {/* Gig detail slide-over panel */}
+      <GigDetailPanel
+        gig={selectedGig}
+        open={!!selectedGig}
+        onClose={() => setSelectedGig(null)}
+        onApply={handleApply}
+        isApplying={applyingId === selectedGig?._id}
+        isApplied={appliedIds.has(selectedGig?._id)}
+      />
     </>
   )
 }

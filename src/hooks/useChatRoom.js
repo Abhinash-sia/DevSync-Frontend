@@ -8,9 +8,8 @@ function normalizeMessagesResponse(data) {
   const unwrapped = unwrap(data)
   return {
     messages: unwrapped?.messages || [],
-    hasNextPage: unwrapped?.hasNextPage ?? unwrapped?.pagination?.hasNextPage ?? false,
-    nextPage: unwrapped?.nextPage ?? unwrapped?.pagination?.nextPage ?? undefined,
-    currentPage: unwrapped?.currentPage ?? unwrapped?.pagination?.currentPage ?? 1,
+    hasMore: unwrapped?.hasMore ?? false,
+    nextCursor: unwrapped?.nextCursor ?? null,
   }
 }
 
@@ -32,8 +31,8 @@ function appendMessageToInfiniteCache(oldData, newMessage) {
   if (!newMessage) return oldData
   if (!oldData?.pages?.length) {
     return {
-      pageParams: [1],
-      pages: [{ messages: [newMessage], hasNextPage: false, nextPage: undefined, currentPage: 1 }],
+      pageParams: [null],
+      pages: [{ messages: [newMessage], hasMore: false, nextCursor: null }],
     }
   }
 
@@ -67,15 +66,19 @@ export function useChatRoom(roomId) {
 
   const messagesQuery = useInfiniteQuery({
     queryKey: ["chat-room", roomId, "messages"],
-    queryFn: async ({ pageParam = 1 }) => {
-      const response = await api.get(`/chat/${roomId}/messages?page=${pageParam}&limit=20`)
+    queryFn: async ({ pageParam }) => {
+      // Backend uses cursor-based pagination: ?before=<messageId>
+      const url = pageParam
+        ? `/chat/${roomId}/messages?limit=20&before=${pageParam}`
+        : `/chat/${roomId}/messages?limit=20`
+      const response = await api.get(url)
       return normalizeMessagesResponse(response)
     },
     enabled: !!roomId && !!user?._id,
-    initialPageParam: 1,
+    initialPageParam: null, // null = first page (no cursor)
     getNextPageParam: (lastPage) => {
-      if (!lastPage?.hasNextPage) return undefined
-      return lastPage?.nextPage || lastPage.currentPage + 1
+      if (!lastPage?.hasMore) return undefined
+      return lastPage?.nextCursor || undefined
     },
   })
 

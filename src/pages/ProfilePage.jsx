@@ -116,7 +116,7 @@ export default function ProfilePage() {
               <p className="mt-1 font-mono text-[10px] tracking-widest text-white/30">{profile?.email}</p>
 
               <div className="mt-8 flex flex-wrap justify-center gap-2">
-                {(profile?.skills || []).slice(0, 4).map((skill) => (
+                {(profile?.skills || []).map((skill) => (
                   <span key={skill} className="rounded-md border border-[#12b3a8]/20 bg-[#12b3a8]/5 px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-[#12b3a8]">
                     {skill}
                   </span>

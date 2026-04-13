@@ -4,6 +4,7 @@ import Navbar from "./Navbar"
 import Sidebar from "./Sidebar"
 import MobileNav from "./MobileNav"
 import { useConnectionsRealtime } from "../../hooks/useConnections"
+import GigApplicationToast from "../gigs/GigApplicationToast"
 
 export default function AppShell() {
   // Keeps your realtime hook perfectly intact
@@ -36,6 +37,9 @@ export default function AppShell() {
       </div>
 
       <MobileNav />
+
+      {/* Global gig-application notification toasts */}
+      <GigApplicationToast />
     </div>
   )
 }

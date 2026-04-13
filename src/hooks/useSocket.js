@@ -1,14 +1,17 @@
 import { useEffect } from "react"
 import { useQueryClient } from "@tanstack/react-query"
-import { initSocket, disconnectSocket, getSocket } from "../lib/socket"
+import { initSocket, disconnectSocket } from "../lib/socket"
 import { useMatchStore } from "../stores/matchStore"
 import { authStore } from "../stores/authStore"
+import { useGigNotificationStore } from "../stores/gigNotificationStore"
 
 export function useSocket() {
   const user = authStore((s) => s.user)
   const queryClient = useQueryClient()
   const setLastMatch = useMatchStore((s) => s.setLastMatch)
   const setOnlineState = useMatchStore((s) => s.setOnlineState)
+  const hydrateOnlineUsers = useMatchStore((s) => s.hydrateOnlineUsers)
+  const addGigNotification = useGigNotificationStore((s) => s.addNotification)
 
   useEffect(() => {
     if (!user?._id) return
@@ -39,6 +42,25 @@ export function useSocket() {
       })
     })
 
+    // ✅ Receive initial online status of all chat partners on connect
+    socket.on("online-users", (entries) => {
+      hydrateOnlineUsers(entries)
+    })
+
+    // ✅ Gig owner gets real-time notification when someone applies
+    socket.on("gig-application", (payload) => {
+      addGigNotification(payload)
+      // Refresh connections so the new chatroom shows up in the sidebar
+      queryClient.invalidateQueries({ queryKey: ["connections"] })
+    })
+
+    // ✅ New comment posted on one of my gigs — refresh that gig's comment list
+    socket.on("gig-comment", (payload) => {
+      if (payload?.gigId) {
+        queryClient.invalidateQueries({ queryKey: ["gig-comments", payload.gigId] })
+      }
+    })
+
     socket.on("connect_error", (err) => {
       console.error("[Socket] Connection error:", err.message)
     })
@@ -46,8 +68,11 @@ export function useSocket() {
     return () => {
       socket.off("match")
       socket.off("online-status")
+      socket.off("online-users")
+      socket.off("gig-application")
+      socket.off("gig-comment")
       socket.off("connect_error")
       disconnectSocket()
     }
-  }, [user?._id, queryClient, setLastMatch, setOnlineState])
+  }, [user?._id, queryClient, setLastMatch, setOnlineState, hydrateOnlineUsers, addGigNotification])
 }

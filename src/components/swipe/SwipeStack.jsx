@@ -1,3 +1,4 @@
+import { motion, AnimatePresence } from "framer-motion"
 import SwipeCard from "./SwipeCard"
 
 export default function SwipeStack({ profiles = [], onAction }) {
@@ -14,19 +15,25 @@ export default function SwipeStack({ profiles = [], onAction }) {
           const isTop = originalIndex === 0
 
           return (
-            <div
+            <motion.div
               key={profile._id}
-              className="absolute inset-0"
-              style={{
-                transform: `scale(${1 - depth * 0.03}) translateY(${depth * 12}px)`,
+              layout
+              initial={{ scale: 0.8, y: 50, opacity: 0 }}
+              animate={{ 
+                scale: 1 - depth * 0.03, 
+                y: depth * 12, 
+                opacity: 1 
               }}
+              exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
+              transition={{ type: "spring", stiffness: 300, damping: 28 }}
+              className="absolute inset-0"
             >
               <SwipeCard
                 profile={profile}
                 isTop={isTop}
                 onSwipe={(action) => onAction(profile, action)}
               />
-            </div>
+            </motion.div>
           )
         })}
     </div>

@@ -49,11 +49,13 @@ export function useApplyGig() {
   return useMutation({
     mutationFn: async (gigId) => {
       const response = await api.post(`/gig/apply/${gigId}`)
-      return unwrap(response)
+      return unwrap(response) // returns { gigId, applied: true, roomId }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["gig-feed"] })
       queryClient.invalidateQueries({ queryKey: ["my-gigs"] })
+      // Invalidate connections so the new chatroom shows up immediately
+      queryClient.invalidateQueries({ queryKey: ["connections"] })
     },
   })
 }

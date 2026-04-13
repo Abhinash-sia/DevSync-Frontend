@@ -19,7 +19,7 @@ export function useSwipe() {
   return useMutation({
     mutationFn: async ({ targetUserId, action }) => {
       // action must be "interested" or "ignored" (backend enum)
-      const mappedAction = action === "like" ? "interested" : "ignored";
+      const mappedAction = (action === "like" || action === "interested") ? "interested" : "ignored";
       const response = await api.post(`/match/swipe/${targetUserId}`, {
         action: mappedAction,
       });

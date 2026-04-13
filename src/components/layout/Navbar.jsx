@@ -1,10 +1,11 @@
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 import { LogOut, TerminalSquare } from "lucide-react"
 import { authStore } from "../../stores/authStore"
 import { useLogout } from "../../hooks/useAuth"
 
 export default function Navbar() {
   const navigate = useNavigate()
+  const location = useLocation()
   const user = authStore((s) => s.user)
   const logout = useLogout()
 
@@ -12,6 +13,18 @@ export default function Navbar() {
     await logout.mutateAsync()
     navigate("/")
   }
+
+  const getPageInfo = () => {
+    const path = location.pathname
+    if (path.includes("/feed")) return { title: "Discovery Feed", subtitle: "network.explore" }
+    if (path.includes("/connections")) return { title: "Connections", subtitle: "network.nodes" }
+    if (path.includes("/gigs")) return { title: "Gig Board", subtitle: "network.bounties" }
+    if (path.includes("/profile")) return { title: "My Profile", subtitle: "dev.identity" }
+    if (path.includes("/chat")) return { title: "Encrypted Comms", subtitle: "socket.active" }
+    return { title: user?.name || "Developer", subtitle: "dev.session.active" }
+  }
+
+  const { title, subtitle } = getPageInfo()
 
   return (
     <header className="sticky top-0 z-30 border-b border-white/[0.04] bg-[#070909]/60 backdrop-blur-2xl">
@@ -23,10 +36,10 @@ export default function Navbar() {
           </div>
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-white/40">
-              dev.session.active
+              {subtitle}
             </p>
             <h1 className="mt-0.5 text-sm font-medium text-white/90">
-              {user?.name || "Developer"}
+              {title}
             </h1>
           </div>
         </div>
