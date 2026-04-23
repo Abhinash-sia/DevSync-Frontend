@@ -14,7 +14,7 @@ import ProfilePage from "../pages/ProfilePage"
 function RouteErrorBoundary() {
   const error = useRouteError()
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#070909] px-4 text-white">
+    <div className="flex min-h-screen items-center justify-center bg-base px-4 text-base">
       <div className="w-full max-w-md rounded-[28px] border border-white/8 bg-white/[0.03] p-8 text-center">
         <div className="text-red-400">System Error</div>
         <h2 className="mt-4 text-2xl font-semibold tracking-[-0.05em] text-white">

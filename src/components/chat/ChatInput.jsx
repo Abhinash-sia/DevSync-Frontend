@@ -13,7 +13,7 @@ export default function ChatInput({ onSend, onTyping, isSending }) {
   }
 
   return (
-    <form onSubmit={submit} className="border-t border-white/6 bg-[#0a0c0d]/90 p-3 md:p-4">
+    <form onSubmit={submit} className="border-t border-base bg-elevated/90 p-3 md:p-4">
       <div className="flex items-end gap-3 rounded-[24px] border border-white/8 bg-white/[0.03] p-2">
         <textarea
           rows={1}
@@ -29,7 +29,7 @@ export default function ChatInput({ onSend, onTyping, isSending }) {
         <button
           type="submit"
           disabled={isSending || !value.trim()}
-          className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#12b3a8]/25 bg-[#12b3a8]/10 text-[#9ff7ee] transition hover:bg-[#12b3a8]/15 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[var(--primary-2)]/25 bg-[var(--primary-2)]/10 text-[var(--primary-2)] transition hover:bg-[var(--primary-2)]/15 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <SendHorizonal size={18} />
         </button>

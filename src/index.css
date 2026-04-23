@@ -29,6 +29,33 @@
   --shadow-card: 0 16px 50px rgba(0, 0, 0, 0.34);
 }
 
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f0f4f5;
+  --bg-elev: #e8eef0;
+  --panel: #ffffff;
+  --panel-2: #f5f9fa;
+  --panel-3: #edf3f4;
+
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.16);
+
+  --text: #0d1315;
+  --text-soft: #3e5257;
+  --text-dim: #6b8088;
+
+  --primary: #4338ca;
+  --primary-2: #4f46e5;
+  --primary-soft: rgba(79, 70, 229, 0.10);
+
+  --danger: #dc2626;
+  --success: #16a34a;
+
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 16px 50px rgba(0, 0, 0, 0.12);
+}
+
 html,
 body,
 #root {
@@ -60,7 +87,7 @@ body {
 * {
   box-sizing: border-box;
   scrollbar-width: thin;
-  scrollbar-color: #2b3132 #090b0b;
+  scrollbar-color: var(--border-strong) var(--bg);
 }
 
 *::-webkit-scrollbar {
@@ -69,11 +96,11 @@ body {
 }
 
 *::-webkit-scrollbar-track {
-  background: #090b0b;
+  background: var(--bg);
 }
 
 *::-webkit-scrollbar-thumb {
-  background: #2b3132;
+  background: var(--border-strong);
   border-radius: 999px;
 }
 
@@ -117,6 +144,81 @@ button {
     Monaco,
     Consolas,
     monospace;
+}
+
+/* ── Semantic theme utilities ─────────────────────────────────────────────── */
+/* Use these in JSX instead of hardcoded bg-[#0x...] classes so                */
+/* they automatically flip when data-theme="light" is set on <html>.           */
+
+.bg-base        { background-color: var(--bg); }
+.bg-elevated    { background-color: var(--bg-elev); }
+.bg-panel       { background-color: var(--panel); }
+.bg-panel-2     { background-color: var(--panel-2); }
+.bg-panel-3     { background-color: var(--panel-3); }
+.text-base      { color: var(--text); }
+.text-soft      { color: var(--text-soft); }
+.text-dim       { color: var(--text-dim); }
+.border-base    { border-color: var(--border); }
+.border-strong  { border-color: var(--border-strong); }
+
+/* ── Light mode: override ALL hardcoded Tailwind text-white/* classes ────── */
+/* Tailwind v4 emits escaped-slash class names (.text-white\/40 etc.).        */
+/* Adding [data-theme="light"] parent boosts specificity above Tailwind's     */
+/* generated rules without needing !important.                                 */
+[data-theme="light"] .text-white              { color: var(--text); }
+[data-theme="light"] .text-white\/5           { color: var(--text-dim); }
+[data-theme="light"] .text-white\/10          { color: var(--text-dim); }
+[data-theme="light"] .text-white\/20          { color: var(--text-dim); }
+[data-theme="light"] .text-white\/30          { color: var(--text-dim); }
+[data-theme="light"] .text-white\/40          { color: var(--text-soft); }
+[data-theme="light"] .text-white\/50          { color: var(--text-soft); }
+[data-theme="light"] .text-white\/55          { color: var(--text-soft); }
+[data-theme="light"] .text-white\/60          { color: var(--text-soft); }
+[data-theme="light"] .text-white\/70          { color: var(--text); }
+[data-theme="light"] .text-white\/80          { color: var(--text); }
+[data-theme="light"] .text-white\/90          { color: var(--text); }
+
+/* ── Light mode: teal chip / badge text stays readable ──────────────────── */
+/* (no override needed — teal on light is fine)                               */
+
+/* ── Light mode: override hardcoded border-white/* border colors ─────────── */
+[data-theme="light"] .border-white\/5         { border-color: var(--border); }
+[data-theme="light"] .border-white\/\[0\.04\] { border-color: var(--border); }
+[data-theme="light"] .border-white\/10        { border-color: var(--border); }
+[data-theme="light"] .border-white\/\[0\.06\] { border-color: var(--border); }
+[data-theme="light"] .border-white\/\[0\.07\] { border-color: var(--border); }
+[data-theme="light"] .border-white\/\[0\.08\] { border-color: var(--border); }
+[data-theme="light"] .border-white\/\[0\.1\]  { border-color: var(--border); }
+[data-theme="light"] .border-white\/20        { border-color: var(--border-strong); }
+[data-theme="light"] .border-white\/30        { border-color: var(--border-strong); }
+
+/* ── Light mode: semi-transparent white backgrounds ─────────────────────── */
+[data-theme="light"] .bg-white\/5             { background-color: var(--panel-2); }
+[data-theme="light"] .bg-white\/\[0\.01\]     { background-color: var(--bg); }
+[data-theme="light"] .bg-white\/\[0\.035\]    { background-color: var(--panel); }
+[data-theme="light"] .bg-white\/\[0\.06\]     { background-color: var(--panel-2); }
+
+/* Panel card — glass-like card usable on any page */
+.panel-card {
+  background-color: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+
+/* Inline input that adapts to theme */
+.input-themed {
+  background-color: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  transition: border-color 180ms ease, background-color 180ms ease;
+}
+.input-themed::placeholder { color: var(--text-dim); }
+.input-themed:hover  { border-color: var(--border-strong); }
+.input-themed:focus  {
+  outline: none;
+  border-color: rgba(18,179,168,0.6);
+  background-color: var(--primary-soft);
+  box-shadow: 0 0 0 4px rgba(18,179,168,0.10);
 }
 
 .page-shell {
@@ -430,4 +532,236 @@ button {
   .ds-card {
     border-radius: 24px;
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════ */
+/* CHAT PAGE                                                                  */
+/* ══════════════════════════════════════════════════════════════════════════ */
+
+.chat-page-shell {
+  position: relative;
+  height: calc(100vh - 80px);
+  overflow: hidden;
+  background-color: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scanline overlay */
+.chat-scanlines {
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(255, 255, 255, 0.012) 3px,
+      rgba(255, 255, 255, 0.012) 4px
+    );
+  pointer-events: none;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0)),
+    var(--bg-elev);
+  backdrop-filter: blur(20px);
+  position: relative;
+  z-index: 20;
+  flex-shrink: 0;
+}
+
+.chat-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  inset-x: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(18, 179, 168, 0.25) 40%,
+    rgba(18, 179, 168, 0.25) 60%,
+    transparent 100%
+  );
+}
+
+/* ── Message list ────────────────────────────────────────────────────────── */
+.chat-message-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  position: relative;
+  scroll-behavior: smooth;
+
+  /* Elegant thin scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(18, 179, 168, 0.18) transparent;
+}
+
+.chat-message-list::-webkit-scrollbar {
+  width: 4px;
+}
+.chat-message-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.chat-message-list::-webkit-scrollbar-thumb {
+  background: rgba(18, 179, 168, 0.2);
+  border-radius: 999px;
+}
+.chat-message-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(18, 179, 168, 0.4);
+}
+
+/* Top + bottom fade masks */
+.chat-message-list::before,
+.chat-message-list::after {
+  content: "";
+  position: sticky;
+  display: block;
+  left: 0;
+  right: 0;
+  height: 28px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.chat-message-list::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--bg), transparent);
+  margin-bottom: -28px;
+}
+
+.chat-message-list::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--bg), transparent);
+  margin-top: -28px;
+}
+
+/* ── Input area ──────────────────────────────────────────────────────────── */
+.chat-input-area {
+  flex-shrink: 0;
+  padding: 14px 16px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background:
+    linear-gradient(0deg, rgba(255,255,255,0.025), rgba(255,255,255,0)),
+    var(--bg-elev);
+  backdrop-filter: blur(24px);
+  position: relative;
+  z-index: 20;
+}
+
+.chat-input-area::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  inset-x: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(18, 179, 168, 0.2) 30%,
+    rgba(18, 179, 168, 0.2) 70%,
+    transparent
+  );
+}
+
+/* ── Composer row ────────────────────────────────────────────────────────── */
+.chat-composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+/* ── Textarea ────────────────────────────────────────────────────────────── */
+.chat-textarea {
+  width: 100%;
+  resize: none;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  padding: 12px 18px;
+  font-size: 14px;
+  line-height: 1.55;
+  font-family: inherit;
+  min-height: 48px;
+  max-height: 140px;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+  overflow-y: auto;
+}
+
+.chat-textarea::placeholder {
+  color: var(--text-dim);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+}
+
+.chat-textarea:hover {
+  border-color: rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.chat-textarea:focus {
+  outline: none;
+  border-color: rgba(18, 179, 168, 0.55);
+  background: rgba(18, 179, 168, 0.04);
+  box-shadow:
+    0 0 0 3px rgba(18, 179, 168, 0.10),
+    0 0 20px rgba(18, 179, 168, 0.08);
+}
+
+/* ── Send button ─────────────────────────────────────────────────────────── */
+.chat-send-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  width: 48px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  border: 1px solid rgba(18, 179, 168, 0.30);
+  background: linear-gradient(
+    145deg,
+    rgba(18, 179, 168, 0.22),
+    rgba(18, 179, 168, 0.09)
+  );
+  color: var(--primary-2);
+  transition: all 180ms ease;
+  cursor: pointer;
+}
+
+.chat-send-btn:hover:not(:disabled) {
+  border-color: rgba(18, 179, 168, 0.55);
+  background: linear-gradient(
+    145deg,
+    rgba(18, 179, 168, 0.35),
+    rgba(18, 179, 168, 0.16)
+  );
+  box-shadow:
+    0 0 0 3px rgba(18, 179, 168, 0.10),
+    0 4px 20px rgba(18, 179, 168, 0.24);
+  transform: translateY(-1px);
+}
+
+.chat-send-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.96);
+}
+
+.chat-send-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }

@@ -17,7 +17,7 @@ export default function GigApplicationToast() {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: 60, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 300, damping: 28 }}
-            className="pointer-events-auto relative overflow-hidden rounded-[18px] border border-[#12b3a8]/25 bg-[#050505] p-5 shadow-2xl"
+            className="pointer-events-auto relative overflow-hidden rounded-[18px] border border-[var(--primary-2)]/25 bg-panel p-5 shadow-2xl"
           >
             {/* Glow */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(18,179,168,0.08),transparent_60%)] pointer-events-none" />
@@ -25,16 +25,16 @@ export default function GigApplicationToast() {
             <div className="relative z-10">
               <div className="flex items-start justify-between gap-3 mb-3">
                 <div className="flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#12b3a8]/10 border border-[#12b3a8]/20">
-                    <BriefcaseBusiness size={13} className="text-[#12b3a8]" />
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--primary-2)]/10 border border-[var(--primary-2)]/20">
+                    <BriefcaseBusiness size={13} className="text-[var(--primary-2)]" />
                   </div>
-                  <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#12b3a8]">
+                  <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-[var(--primary-2)]">
                     New Application
                   </span>
                 </div>
                 <button
                   onClick={() => remove(n.id)}
-                  className="flex h-6 w-6 items-center justify-center rounded-md border border-white/10 bg-[#0a0a0a] text-white/30 hover:text-white transition"
+                  className="flex h-6 w-6 items-center justify-center rounded-md border border-base bg-panel-2 text-dim hover:text-base transition"
                 >
                   <X size={11} />
                 </button>
@@ -57,7 +57,7 @@ export default function GigApplicationToast() {
               {n.applicant?.skills?.length > 0 && (
                 <div className="flex flex-wrap gap-1 mb-3">
                   {n.applicant.skills.map((skill) => (
-                    <span key={skill} className="rounded border border-[#12b3a8]/20 bg-[#12b3a8]/10 px-1.5 py-0.5 text-[8px] uppercase tracking-widest text-[#12b3a8]">
+                    <span key={skill} className="rounded border border-[var(--primary-2)]/20 bg-[var(--primary-2)]/10 px-1.5 py-0.5 text-[8px] uppercase tracking-widest text-[var(--primary-2)]">
                       {skill}
                     </span>
                   ))}
@@ -67,12 +67,12 @@ export default function GigApplicationToast() {
               <Link
                 to={`/app/chat/${n.roomId}`}
                 onClick={() => remove(n.id)}
-                className="flex items-center justify-center gap-2 rounded-xl border border-[#12b3a8]/30 bg-[#0a0a0a] px-4 py-2.5 transition-all hover:border-[#12b3a8] hover:bg-[#12b3a8]/10 hover:shadow-[0_0_15px_rgba(18,179,168,0.2)]"
+                className="flex items-center justify-center gap-2 rounded-xl border border-[var(--primary-2)]/30 bg-panel-2 px-4 py-2.5 transition-all hover:border-[var(--primary-2)] hover:bg-[var(--primary-2)]/10 hover:shadow-[0_0_15px_rgba(18,179,168,0.2)]"
               >
-                <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-[#12b3a8]">
+                <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-[var(--primary-2)]">
                   Open Chat
                 </span>
-                <ArrowRight size={12} className="text-[#12b3a8]" />
+                <ArrowRight size={12} className="text-[var(--primary-2)]" />
               </Link>
             </div>
           </motion.div>

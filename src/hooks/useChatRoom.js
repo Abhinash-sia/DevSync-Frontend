@@ -19,7 +19,11 @@ function getMessageFromPayload(payload) {
 
 function isSameMessage(a, b) {
   if (!a || !b) return false
-  if (a._id && b._id) return a._id === b._id
+  // Never treat a real persisted message as the same as an optimistic temp message
+  if (a._id && b._id) {
+    if (String(a._id).startsWith("temp-") !== String(b._id).startsWith("temp-")) return false
+    return a._id === b._id
+  }
   return (
     a.content === b.content &&
     (a.createdAt || a.timestamp) === (b.createdAt || b.timestamp) &&
@@ -54,6 +58,8 @@ export function useChatRooms() {
       const data = unwrap(response)
       return Array.isArray(data) ? data : data?.rooms || []
     },
+    // Perf: sidebar is kept fresh by socket setQueryData — no auto-refetch needed
+    staleTime: 5 * 60 * 1000,
   })
 }
 
@@ -80,6 +86,8 @@ export function useChatRoom(roomId) {
       if (!lastPage?.hasMore) return undefined
       return lastPage?.nextCursor || undefined
     },
+    // Perf: messages are kept fresh by socket events — disable background refetching
+    staleTime: Infinity,
   })
 
   // Safely flatten messages and guard against undefined arrays
@@ -96,9 +104,49 @@ export function useChatRoom(roomId) {
       const response = await api.post(`/chat/${roomId}/send`, { content })
       return unwrap(response)?.message || unwrap(response)
     },
-    onSuccess: (message) => {
-      queryClient.setQueryData(["chat-room", roomId, "messages"], (old) => appendMessageToInfiniteCache(old, message))
-      queryClient.invalidateQueries({ queryKey: ["chat-rooms"] })
+    onMutate: async (content) => {
+      await queryClient.cancelQueries({ queryKey: ["chat-room", roomId, "messages"] })
+      const previousMessages = queryClient.getQueryData(["chat-room", roomId, "messages"])
+
+      const optimisticMessage = {
+        _id: `temp-${Date.now()}`,
+        content,
+        sender: user,
+        createdAt: new Date().toISOString(),
+        status: "sending"
+      }
+
+      queryClient.setQueryData(["chat-room", roomId, "messages"], (old) => appendMessageToInfiniteCache(old, optimisticMessage))
+
+      return { previousMessages, optimisticMessageId: optimisticMessage._id }
+    },
+    onError: (err, newMsg, context) => {
+      if (context?.previousMessages) {
+        queryClient.setQueryData(["chat-room", roomId, "messages"], context.previousMessages)
+      }
+    },
+    onSuccess: (message, variables, context) => {
+      queryClient.setQueryData(["chat-room", roomId, "messages"], (old) => {
+        if (!old?.pages?.length) return old
+        const pages = [...old.pages]
+        const existingMessages = pages[0]?.messages || []
+        pages[0] = {
+          ...pages[0],
+          messages: existingMessages.map((msg) =>
+            msg._id === context?.optimisticMessageId ? message : msg
+          ),
+        }
+        return { ...old, pages }
+      })
+      // Perf: update chat-rooms sidebar in-cache instead of triggering HTTP refetch
+      queryClient.setQueryData(["chat-rooms"], (old) => {
+        if (!Array.isArray(old)) return old
+        return old.map((room) =>
+          String(room._id) === roomId
+            ? { ...room, lastMessage: message, updatedAt: message.createdAt }
+            : room
+        )
+      })
     },
   })
 
@@ -108,13 +156,6 @@ export function useChatRoom(roomId) {
     const socket = getSocket() || initSocket()
     setTypingUsers([])
     socket.emit("join-room", { roomId })
-
-    const handleMessage = (payload) => {
-      if (payload?.roomId && payload.roomId !== roomId) return
-      const message = getMessageFromPayload(payload)
-      queryClient.setQueryData(["chat-room", roomId, "messages"], (old) => appendMessageToInfiniteCache(old, message))
-      queryClient.invalidateQueries({ queryKey: ["chat-rooms"] })
-    }
 
     const handleTyping = (payload) => {
       if (payload?.roomId !== roomId || !payload?.userId || payload.userId === user._id) return
@@ -135,11 +176,9 @@ export function useChatRoom(roomId) {
       typingTimeouts.current.set(payload.userId, timeout)
     }
 
-    socket.on("message", handleMessage)
     socket.on("typing", handleTyping)
 
     return () => {
-      socket.off("message", handleMessage)
       socket.off("typing", handleTyping)
       typingTimeouts.current.forEach((timeout) => clearTimeout(timeout))
       typingTimeouts.current.clear()
@@ -158,4 +197,48 @@ export function useChatRoom(roomId) {
   }
 
   return { ...messagesQuery, messages: flatMessages, sendMessage, typingUsers, emitTyping }
+}
+
+export function useChatRealtime() {
+  const user = authStore((s) => s.user)
+  const queryClient = useQueryClient()
+
+  useEffect(() => {
+    if (!user?._id) return
+
+    const socket = getSocket() || initSocket()
+
+    const handleMessage = (payload) => {
+      if (!payload?.roomId) return
+      const message = getMessageFromPayload(payload)
+
+      // Skip messages sent by this user — the sendMessage mutation's onSuccess
+      // already handles swapping the temp optimistic message with the real one.
+      // Processing it here too would cause a race that shows duplicates.
+      const senderId = message?.sender?._id || message?.senderId || message?.userId
+      if (senderId && String(senderId) === String(user._id)) return
+
+      // Update specific target chat room cache if it is loaded
+      queryClient.setQueryData(["chat-room", payload.roomId, "messages"], (old) => {
+        if (!old) return old
+        return appendMessageToInfiniteCache(old, message)
+      })
+
+      // Perf: update sidebar in-cache instead of triggering HTTP refetch on every socket message
+      queryClient.setQueryData(["chat-rooms"], (old) => {
+        if (!Array.isArray(old)) return old
+        return old.map((room) =>
+          String(room._id) === payload.roomId
+            ? { ...room, lastMessage: message, updatedAt: message.createdAt }
+            : room
+        )
+      })
+    }
+
+    socket.on("message", handleMessage)
+
+    return () => {
+      socket.off("message", handleMessage)
+    }
+  }, [queryClient, user?._id, user])
 }

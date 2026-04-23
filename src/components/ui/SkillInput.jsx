@@ -23,7 +23,7 @@ export default function SkillInput({
   }
 
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-[#0d0d0d] p-3">
+    <div className="rounded-2xl border border-base bg-panel-2 p-3">
       <div className="flex flex-wrap gap-2">
         {value.map((skill) => (
           <span
@@ -54,7 +54,7 @@ export default function SkillInput({
           }
         }}
         placeholder={placeholder}
-        className="mt-3 w-full bg-transparent text-sm text-zinc-100 outline-none placeholder:text-zinc-500"
+        className="mt-3 w-full bg-transparent text-sm text-base outline-none placeholder:text-dim"
       />
     </div>
   )

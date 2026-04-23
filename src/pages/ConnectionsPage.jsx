@@ -32,9 +32,9 @@ function ConnectionsSkeleton() {
   return (
     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
       {Array.from({ length: 6 }).map((_, i) => (
-        <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative h-64 rounded-[24px] overflow-hidden border border-white/[0.04] bg-[#050505]">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#12b3a8]/5 to-transparent" />
-          <Skeleton className="absolute inset-0 bg-[#0a0a0a]" />
+        <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative h-64 rounded-[24px] overflow-hidden border border-base bg-panel">
+          <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary-2)]/5 to-transparent" />
+          <Skeleton className="absolute inset-0 bg-panel-2" />
         </motion.div>
       ))}
     </div>
@@ -56,7 +56,7 @@ export default function ConnectionsPage() {
     : []
 
   return (
-    <section className="page-shell relative min-h-screen bg-[#000000] text-white px-4 pb-24 pt-8 md:px-8 max-w-[1600px] mx-auto">
+    <section className="page-shell relative min-h-screen bg-base text-base px-4 pb-24 pt-8 md:px-8 max-w-[1600px] mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -64,7 +64,7 @@ export default function ConnectionsPage() {
         className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6"
       >
         <div>
-          <div className="flex items-center gap-2 text-[#12b3a8] text-[10px] font-mono tracking-[0.2em] uppercase mb-4">
+          <div className="flex items-center gap-2 text-[var(--primary-2)] text-[10px] font-mono tracking-[0.2em] uppercase mb-4">
             <Network size={14} />
             <span>[ SYS.NETWORK.NODES ]</span>
           </div>
@@ -72,8 +72,8 @@ export default function ConnectionsPage() {
             SECURED <span className="text-white/30">LINKS.</span>
           </h1>
         </div>
-        <div className="flex h-12 items-center gap-3 rounded-xl border border-white/[0.04] bg-[#050505] px-6">
-          <div className="h-1.5 w-1.5 rounded-full bg-[#12b3a8] shadow-[0_0_8px_rgba(18,179,168,0.8)]" />
+        <div className="flex h-12 items-center gap-3 rounded-xl border border-base bg-panel px-6">
+          <div className="h-1.5 w-1.5 rounded-full bg-[var(--primary-2)] shadow-[0_0_8px_rgba(18,179,168,0.8)]" />
           <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-white/50">{connections.length} tunnels open</span>
         </div>
       </motion.div>
@@ -87,23 +87,23 @@ export default function ConnectionsPage() {
               key={dev._id}
               variants={cardVariants}
               whileHover={{ y: -4 }}
-              className="group relative overflow-hidden rounded-[24px] border border-white/[0.04] bg-[#050505] p-8 transition-colors hover:border-[#12b3a8]/30 hover:bg-[#0a0a0a]"
+              className="group relative overflow-hidden rounded-[24px] border border-base bg-panel p-8 transition-colors hover:border-[var(--primary-2)]/30 hover:bg-elevated"
             >
-              <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-[#12b3a8]/10 blur-[50px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+              <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-[var(--primary-2)]/10 blur-[50px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
               
               <div className="relative z-10 flex items-start gap-4">
                 <div className="relative">
                   <img
                     src={dev.photoUrl || `https://ui-avatars.com/api/?name=${dev.name || 'D'}&background=111&color=fff`}
                     alt={dev.name}
-                    className="h-14 w-14 rounded-xl object-cover ring-2 ring-[#000000]"
+                    className="h-14 w-14 rounded-xl object-cover ring-2 ring-[var(--bg)]"
                   />
                   {dev.isOnline && (
-                    <div className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full border-2 border-[#000000] bg-[#12b3a8] shadow-[0_0_10px_rgba(18,179,168,0.8)]" />
+                    <div className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full border-2 border-[var(--bg)] bg-[var(--primary-2)] shadow-[0_0_10px_rgba(18,179,168,0.8)]" />
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h2 className="truncate text-lg font-bold tracking-tight text-white group-hover:text-[#12b3a8] transition-colors uppercase">
+                  <h2 className="truncate text-lg font-bold tracking-tight text-white group-hover:text-[var(--primary-2)] transition-colors uppercase">
                     {dev.name || "UNNAMED_NODE"}
                   </h2>
                   <p className="mt-1 text-[10px] text-white/40 font-mono uppercase tracking-widest truncate">
@@ -121,17 +121,17 @@ export default function ConnectionsPage() {
               <div className="relative z-10 mt-8 flex items-center gap-3 border-t border-white/[0.04] pt-6">
                 <Link
                   to={`/app/chat/${roomId}`}
-                  className="flex flex-1 items-center justify-center gap-3 rounded-xl border border-[#12b3a8]/30 bg-[#0a0a0a] px-4 py-3 transition-all hover:border-[#12b3a8] hover:bg-[#12b3a8]/10 hover:shadow-[0_0_15px_rgba(18,179,168,0.2)]"
+                  className="flex flex-1 items-center justify-center gap-3 rounded-xl border border-[var(--primary-2)]/30 bg-panel-2 px-4 py-3 transition-all hover:border-[var(--primary-2)] hover:bg-[var(--primary-2)]/10 hover:shadow-[0_0_15px_rgba(18,179,168,0.2)]"
                 >
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#12b3a8]">Access Socket</span>
-                  <ArrowRight size={14} className="text-[#12b3a8]" />
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--primary-2)]">Access Socket</span>
+                  <ArrowRight size={14} className="text-[var(--primary-2)]" />
                 </Link>
                 {dev.githubUrl && (
                   <a
                     href={dev.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex shrink-0 h-[42px] w-[42px] items-center justify-center rounded-xl border border-white/[0.04] bg-[#0a0a0a] text-white/30 transition hover:border-[#12b3a8]/50 hover:bg-[#12b3a8]/10 hover:text-[#12b3a8]"
+                    className="flex shrink-0 h-[42px] w-[42px] items-center justify-center rounded-xl border border-base bg-panel-2 text-dim transition hover:border-[var(--primary-2)]/50 hover:bg-[var(--primary-2)]/10 hover:text-[var(--primary-2)]"
                   >
                     <ExternalLink size={16} />
                   </a>
@@ -141,18 +141,18 @@ export default function ConnectionsPage() {
           ))}
         </motion.div>
       ) : (
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative mx-auto mt-10 max-w-lg overflow-hidden rounded-[24px] border border-white/[0.04] bg-[#050505] p-10 text-center shadow-2xl">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#12b3a8]/5 to-transparent pointer-events-none" />
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/[0.04] bg-[#0a0a0a] text-white/20 mb-6">
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="relative mx-auto mt-10 max-w-lg overflow-hidden rounded-[24px] border border-base bg-panel p-10 text-center shadow-2xl">
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--primary-2)]/5 to-transparent pointer-events-none" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-base bg-panel-2 text-dim mb-6">
             <Network size={24} />
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-white uppercase">No Active Tunnels.</h2>
           <p className="mt-4 font-mono text-xs leading-relaxed text-white/40 max-w-sm mx-auto">
             Swipe in the Discovery Feed to isolate nodes matching your architecture. Mutual handshakes open secure sockets.
           </p>
-          <Link to="/app/feed" className="mt-8 inline-flex h-12 items-center justify-center gap-3 rounded-xl border border-[#12b3a8]/40 bg-[#0a0a0a] px-8 transition-all hover:border-[#12b3a8] hover:bg-[#12b3a8]/10 hover:shadow-[0_0_20px_rgba(18,179,168,0.2)]">
-            <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#12b3a8]">Open Discovery</span>
-            <ArrowRight size={14} className="text-[#12b3a8]" />
+          <Link to="/app/feed" className="mt-8 inline-flex h-12 items-center justify-center gap-3 rounded-xl border border-[var(--primary-2)]/40 bg-panel-2 px-8 transition-all hover:border-[var(--primary-2)] hover:bg-[var(--primary-2)]/10 hover:shadow-[0_0_20px_rgba(18,179,168,0.2)]">
+            <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--primary-2)]">Open Discovery</span>
+            <ArrowRight size={14} className="text-[var(--primary-2)]" />
           </Link>
         </motion.div>
       )}

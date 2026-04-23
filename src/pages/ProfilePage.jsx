@@ -15,14 +15,19 @@ const profileSchema = z.object({
   bio: z.string().max(500, "Bio cannot exceed 500 characters"),
   skills: z.array(z.string()).default([]),
   githubUrl: z.string().optional().or(z.literal("")),
+  codeSnippet: z.object({
+    code: z.string().max(1000, "Code cannot exceed 1000 characters").optional(),
+    language: z.string().optional(),
+    title: z.string().max(50).optional(),
+  }).optional(),
 })
 
 function StatCard({ label, value }) {
   return (
-    <div className="relative overflow-hidden rounded-[24px] border border-white/[0.04] bg-[#050505] p-6 transition-colors hover:border-[#12b3a8]/30 hover:bg-[#0a0a0a]">
-      <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-[#12b3a8]/10 blur-xl" />
-      <p className="font-mono text-[10px] uppercase tracking-widest text-white/30">{label}</p>
-      <p className="mt-2 font-mono text-3xl font-bold tracking-tight text-[#12b3a8]">{value}</p>
+    <div className="relative overflow-hidden rounded-[24px] border border-base bg-panel p-6 transition-colors hover:border-[var(--primary-2)]/30 hover:bg-elevated">
+      <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-[var(--primary-2)]/10 blur-xl" />
+      <p className="font-mono text-[10px] uppercase tracking-widest text-dim">{label}</p>
+      <p className="mt-2 font-mono text-3xl font-bold tracking-tight text-[var(--primary-2)]">{value}</p>
     </div>
   )
 }
@@ -55,14 +60,21 @@ export default function ProfilePage() {
       bio: profile?.bio || "",
       skills: profile?.skills || [],
       githubUrl: profile?.githubUrl || profile?.github || "",
+      codeSnippet: profile?.codeSnippet || { code: "", language: "javascript", title: "" },
     },
   })
 
   useEffect(() => {
-    if (profile) reset({ bio: profile.bio || "", skills: profile.skills || [], githubUrl: profile.githubUrl || profile.github || "" })
+    if (profile) reset({ 
+      bio: profile.bio || "", 
+      skills: profile.skills || [], 
+      githubUrl: profile.githubUrl || profile.github || "",
+      codeSnippet: profile.codeSnippet || { code: "", language: "javascript", title: "" }
+    })
   }, [profile, reset])
 
   const bioValue = watch("bio") || ""
+  const codeValue = watch("codeSnippet.code") || ""
 
   const onSubmit = async (values) => await updateProfile.mutateAsync(values)
   const onPhotoChange = async (e) => { if (e.target.files?.[0]) await uploadPhoto.mutateAsync(e.target.files[0]) }
@@ -77,54 +89,54 @@ export default function ProfilePage() {
   }
 
   if (profileQuery.isLoading) return (
-    <section className="px-8 pt-8 max-w-[1600px] mx-auto min-h-screen bg-[#000000]"><Skeleton className="h-[500px] rounded-[32px] bg-[#050505] border border-white/[0.04]" /></section>
+    <section className="px-8 pt-8 max-w-[1600px] mx-auto min-h-screen bg-base"><Skeleton className="h-[500px] rounded-[32px] bg-panel border border-base" /></section>
   )
 
   return (
-    <section className="page-shell px-4 pb-24 pt-8 md:px-8 max-w-[1600px] mx-auto relative min-h-screen bg-[#000000] text-white selection:bg-[#12b3a8]/30 selection:text-[#12b3a8]">
+    <section className="page-shell px-4 pb-24 pt-8 md:px-8 max-w-[1600px] mx-auto relative min-h-screen bg-base text-base selection:bg-[var(--primary-2)]/30 selection:text-[var(--primary-2)]">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
-        <div className="flex items-center gap-2 text-[#12b3a8] text-[10px] font-mono tracking-[0.2em] uppercase mb-4">
+        <div className="flex items-center gap-2 text-[var(--primary-2)] text-[10px] font-mono tracking-[0.2em] uppercase mb-4">
           <User2 size={14} />
           <span>[ SYS.PROFILE.CORE ]</span>
         </div>
-        <h1 className="text-[clamp(2.5rem,5vw,4rem)] font-black leading-[1.1] tracking-tighter text-white">
-          CONFIGURE <span className="text-white/30">IDENTITY.</span>
+        <h1 className="text-[clamp(2.5rem,5vw,4rem)] font-black leading-[1.1] tracking-tighter text-base">
+          CONFIGURE <span className="text-dim">IDENTITY.</span>
         </h1>
       </motion.div>
 
       <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
         {/* Left Sidebar Profile View */}
         <motion.aside initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="space-y-6">
-          <div className="relative overflow-hidden rounded-[32px] border border-white/[0.04] bg-[#050505] p-8">
-            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#12b3a8]/10 to-transparent pointer-events-none" />
+          <div className="relative overflow-hidden rounded-[32px] border border-base bg-panel p-8">
+            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[var(--primary-2)]/10 to-transparent pointer-events-none" />
             
             <div className="relative z-10 flex flex-col items-center text-center">
               <div className="relative group">
-                <div className="absolute -inset-2 rounded-[32px] bg-[#12b3a8]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute -inset-2 rounded-[32px] bg-[var(--primary-2)]/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <img
                   src={profile?.photoUrl || `https://ui-avatars.com/api/?name=${profile?.name || 'D'}&background=111&color=fff`}
                   alt="Avatar"
-                  className="relative h-28 w-28 rounded-[24px] object-cover ring-2 ring-[#000000] shadow-2xl"
+                  className="relative h-28 w-28 rounded-[24px] object-cover ring-2 ring-[var(--bg)] shadow-2xl"
                 />
-                <button onClick={() => photoInputRef.current?.click()} className="absolute -bottom-3 -right-3 flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-[#0a0a0a] text-white hover:border-[#12b3a8] hover:text-[#12b3a8] transition-colors shadow-lg">
+                <button onClick={() => photoInputRef.current?.click()} className="absolute -bottom-3 -right-3 flex h-10 w-10 items-center justify-center rounded-xl border border-base bg-panel-2 text-base hover:border-[var(--primary-2)] hover:text-[var(--primary-2)] transition-colors shadow-lg">
                   <ImagePlus size={16} />
                 </button>
                 <input ref={photoInputRef} type="file" accept="image/*" className="hidden" onChange={onPhotoChange} />
               </div>
 
-              <h2 className="mt-8 text-2xl font-bold tracking-tight text-white uppercase">{profile?.name}</h2>
-              <p className="mt-1 font-mono text-[10px] tracking-widest text-white/30">{profile?.email}</p>
+              <h2 className="mt-8 text-2xl font-bold tracking-tight text-base uppercase">{profile?.name}</h2>
+              <p className="mt-1 font-mono text-[10px] tracking-widest text-dim">{profile?.email}</p>
 
               <div className="mt-8 flex flex-wrap justify-center gap-2">
                 {(profile?.skills || []).map((skill) => (
-                  <span key={skill} className="rounded-md border border-[#12b3a8]/20 bg-[#12b3a8]/5 px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-[#12b3a8]">
+                  <span key={skill} className="rounded-md border border-[var(--primary-2)]/20 bg-[var(--primary-2)]/5 px-2 py-1 font-mono text-[10px] uppercase tracking-wider text-[var(--primary-2)]">
                     {skill}
                   </span>
                 ))}
               </div>
 
               {profile?.githubUrl && (
-                <a href={profile.githubUrl} target="_blank" rel="noopener noreferrer" className="mt-8 flex w-full h-12 items-center justify-center gap-2 rounded-xl border border-white/[0.04] bg-[#0a0a0a] font-mono text-[10px] font-bold uppercase tracking-widest text-white/60 hover:border-[#12b3a8]/50 hover:bg-[#12b3a8]/10 hover:text-white transition-all">
+                <a href={profile.githubUrl} target="_blank" rel="noopener noreferrer" className="mt-8 flex w-full h-12 items-center justify-center gap-2 rounded-xl border border-base bg-panel-2 font-mono text-[10px] font-bold uppercase tracking-widest text-soft hover:border-[var(--primary-2)]/50 hover:bg-[var(--primary-2)]/10 hover:text-base transition-all">
                   <ExternalLink size={14} /> GitHub Profile
                 </a>
               )}
@@ -141,18 +153,18 @@ export default function ProfilePage() {
 
         {/* Right Content Profile Editor */}
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="space-y-6">
-          <div className="relative overflow-hidden rounded-[32px] border border-white/[0.04] bg-[#050505] p-8 md:p-10">
+          <div className="relative overflow-hidden rounded-[32px] border border-base bg-panel p-8 md:p-10">
             
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-12">
               <div>
-                <h2 className="text-3xl font-black tracking-tight text-white uppercase">Parameters.</h2>
-                <p className="mt-2 font-mono text-[11px] text-white/40">Update your stack and bio to calibrate the matchmaking engine.</p>
+                <h2 className="text-3xl font-black tracking-tight text-base uppercase">Parameters.</h2>
+                <p className="mt-2 font-mono text-[11px] text-soft">Update your stack and bio to calibrate the matchmaking engine.</p>
               </div>
 
               <div className="shrink-0 relative group">
-                <button onClick={() => resumeInputRef.current?.click()} disabled={parseResumeAI.isPending} className="relative flex h-12 items-center gap-3 rounded-xl border border-[#12b3a8]/30 bg-[#0a0a0a] px-6 transition-all hover:border-[#12b3a8] hover:bg-[#12b3a8]/10 hover:shadow-[0_0_20px_rgba(18,179,168,0.2)] disabled:opacity-50">
-                  {parseResumeAI.isPending ? <Loader2 size={14} className="animate-spin text-[#12b3a8]" /> : <Cpu size={14} className="text-[#12b3a8]" />}
-                  <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#12b3a8]">
+                <button onClick={() => resumeInputRef.current?.click()} disabled={parseResumeAI.isPending} className="relative flex h-12 items-center gap-3 rounded-xl border border-[var(--primary-2)]/30 bg-panel-2 px-6 transition-all hover:border-[var(--primary-2)] hover:bg-[var(--primary-2)]/10 hover:shadow-[0_0_20px_rgba(18,179,168,0.2)] disabled:opacity-50">
+                  {parseResumeAI.isPending ? <Loader2 size={14} className="animate-spin text-[var(--primary-2)]" /> : <Cpu size={14} className="text-[var(--primary-2)]" />}
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--primary-2)]">
                     {parseResumeAI.isPending ? "Extracting..." : "Parse Resume PDF"}
                   </span>
                 </button>
@@ -170,9 +182,9 @@ export default function ProfilePage() {
               <div>
                 <div className="flex justify-between items-end mb-3">
                   <label className="block font-mono text-[10px] uppercase tracking-widest text-white/40">Professional Bio</label>
-                  <span className="font-mono text-[10px] text-[#12b3a8]">{bioValue.length}/500</span>
+                  <span className="font-mono text-[10px] text-[var(--primary-2)]">{bioValue.length}/500</span>
                 </div>
-                <textarea {...register("bio")} rows={5} className="w-full resize-none rounded-xl border border-white/10 bg-[#0a0a0a] px-5 py-4 font-mono text-sm text-white placeholder:text-white/20 focus:border-[#12b3a8]/50 focus:bg-[#12b3a8]/5 focus:outline-none transition-colors" />
+                <textarea {...register("bio")} rows={5} className="w-full resize-none rounded-xl border border-base bg-panel-2 px-5 py-4 font-mono text-sm text-base placeholder:text-dim focus:border-[var(--primary-2)]/50 focus:bg-[var(--primary-2)]/5 focus:outline-none transition-colors" />
                 {errors.bio && <p className="mt-2 font-mono text-[10px] text-red-400">{errors.bio.message}</p>}
               </div>
 
@@ -187,13 +199,50 @@ export default function ProfilePage() {
                 <label className="mb-3 block font-mono text-[10px] uppercase tracking-widest text-white/40">GitHub URL</label>
                 <div className="relative">
                   <span className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20"><LinkIcon size={14} /></span>
-                  <input {...register("githubUrl")} className="w-full rounded-xl border border-white/10 bg-[#0a0a0a] py-4 pl-12 pr-5 font-mono text-sm text-white placeholder:text-white/20 focus:border-[#12b3a8]/50 focus:bg-[#12b3a8]/5 focus:outline-none transition-colors" />
+                  <input {...register("githubUrl")} className="w-full rounded-xl border border-base bg-panel-2 py-4 pl-12 pr-5 font-mono text-sm text-base placeholder:text-dim focus:border-[var(--primary-2)]/50 focus:bg-[var(--primary-2)]/5 focus:outline-none transition-colors" />
+                </div>
+              </div>
+
+              {/* Code Snippet Section */}
+              <div className="rounded-[24px] border border-base bg-panel-3 p-6 shadow-[inset_0_0_20px_rgba(255,255,255,0.01)]">
+                <h3 className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-white/50 mb-6">
+                  <span className="h-2 w-2 rounded-full bg-[var(--primary-2)] animate-pulse"></span>
+                  Featured Code Snippet
+                </h3>
+                
+                <div className="grid gap-4 mb-4 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block font-mono text-[10px] uppercase tracking-widest text-white/40">Title / Description</label>
+                    <input {...register("codeSnippet.title")} placeholder="e.g. My Custom React Hook" className="w-full rounded-xl border border-base bg-panel-2 px-4 py-3 font-mono text-xs text-base placeholder:text-dim focus:border-[var(--primary-2)]/50 focus:outline-none transition-colors" />
+                  </div>
+                  <div>
+                    <label className="mb-2 block font-mono text-[10px] uppercase tracking-widest text-white/40">Language</label>
+                    <select {...register("codeSnippet.language")} className="w-full rounded-xl border border-base bg-panel-2 px-4 py-3 font-mono text-xs text-base focus:border-[var(--primary-2)]/50 focus:outline-none transition-colors appearance-none">
+                      <option value="javascript">JavaScript</option>
+                      <option value="typescript">TypeScript</option>
+                      <option value="python">Python</option>
+                      <option value="java">Java</option>
+                      <option value="rust">Rust</option>
+                      <option value="go">Go</option>
+                      <option value="cpp">C++</option>
+                      <option value="json">JSON</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-end mb-2">
+                    <label className="block font-mono text-[10px] uppercase tracking-widest text-white/40">Code block (Max 1000 chars)</label>
+                    <span className="font-mono text-[10px] text-[var(--primary-2)]">{codeValue.length}/1000</span>
+                  </div>
+                  <textarea {...register("codeSnippet.code")} rows={8} placeholder="function showcase() { return 'epic'; }" className="w-full resize-none rounded-xl border border-base bg-panel-2 px-5 py-4 font-mono text-[11px] text-[#8ee7df] placeholder:text-dim focus:border-[var(--primary-2)]/50 focus:bg-[var(--primary-2)]/5 focus:outline-none transition-colors" spellCheck="false" />
+                  {errors.codeSnippet?.code && <p className="mt-2 font-mono text-[10px] text-red-400">{errors.codeSnippet.code.message}</p>}
                 </div>
               </div>
 
               <div className="flex justify-end pt-8 border-t border-white/[0.04]">
-                <button type="submit" disabled={updateProfile.isPending} className="group relative flex h-12 items-center justify-center overflow-hidden rounded-xl border border-[#12b3a8]/40 bg-[#0a0a0a] px-8 transition-all hover:border-[#12b3a8] hover:bg-[#12b3a8]/10 hover:shadow-[0_0_20px_rgba(18,179,168,0.2)] disabled:opacity-50">
-                  <span className="relative z-10 flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-[#12b3a8]">
+                <button type="submit" disabled={updateProfile.isPending} className="group relative flex h-12 items-center justify-center overflow-hidden rounded-xl border border-[var(--primary-2)]/40 bg-panel-2 px-8 transition-all hover:border-[var(--primary-2)] hover:bg-[var(--primary-2)]/10 hover:shadow-[0_0_20px_rgba(18,179,168,0.2)] disabled:opacity-50">
+                  <span className="relative z-10 flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest text-[var(--primary-2)]">
                     <Save size={14} />
                     {updateProfile.isPending ? "Writing..." : "Commit Changes"}
                   </span>

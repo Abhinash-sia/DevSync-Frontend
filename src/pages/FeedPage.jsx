@@ -18,8 +18,8 @@ function FeedSkeleton() {
       animate={{ opacity: 1, scale: 1 }}
       className="mx-auto max-w-md relative"
     >
-      <div className="absolute -inset-1 rounded-[24px] bg-[#12b3a8]/10 blur-[40px] opacity-50" />
-      <Skeleton className="h-[70svh] w-full rounded-[24px] border border-white/[0.04] bg-[#050505] relative z-10" />
+      <div className="absolute -inset-1 rounded-[24px] bg-[var(--primary-2)]/10 blur-[40px] opacity-50" />
+      <Skeleton className="h-[70svh] w-full rounded-[24px] border border-base bg-panel relative z-10" />
     </motion.div>
   );
 }
@@ -92,7 +92,7 @@ export default function FeedPage() {
       initial="hidden"
       animate="visible"
       variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
-      className="relative min-h-screen bg-[#000000] px-4 pb-24 pt-8 md:px-8 max-w-7xl mx-auto text-white"
+      className="relative min-h-screen bg-base px-4 pb-24 pt-8 md:px-8 text-base w-full"
     >
       {/* Header Area */}
       <motion.div
@@ -100,7 +100,7 @@ export default function FeedPage() {
         className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6"
       >
         <div>
-          <div className="flex items-center gap-2 text-[#12b3a8] text-[10px] font-mono tracking-[0.2em] uppercase mb-4">
+          <div className="flex items-center gap-2 text-[var(--primary-2)] text-[10px] font-mono tracking-[0.2em] uppercase mb-4">
             <Terminal size={14} />
             <span>[ SYS.DISCOVERY.NODE ]</span>
           </div>
@@ -110,8 +110,8 @@ export default function FeedPage() {
           </h1>
         </div>
 
-        <div className="flex h-12 items-center gap-3 rounded-xl border border-white/[0.04] bg-[#050505] px-6">
-          <div className="h-1.5 w-1.5 rounded-full bg-[#12b3a8] animate-pulse shadow-[0_0_8px_rgba(18,179,168,0.8)]" />
+        <div className="flex h-12 items-center gap-3 rounded-xl border border-base bg-panel px-6">
+          <div className="h-1.5 w-1.5 rounded-full bg-[var(--primary-2)] animate-pulse shadow-[0_0_8px_rgba(18,179,168,0.8)]" />
           <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-white/50">
             Scanning Network
           </span>
@@ -123,7 +123,7 @@ export default function FeedPage() {
         {/* Left Side: The Card Stack */}
         <motion.div
           variants={fadeUp}
-          className="relative w-full max-w-[500px] mx-auto xl:mx-0"
+          className="relative w-full max-w-[500px] mx-auto"
         >
           {feed.isLoading ? (
             <FeedSkeleton />
@@ -135,10 +135,10 @@ export default function FeedPage() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="relative overflow-hidden rounded-[24px] border border-white/[0.04] bg-[#050505] p-10 text-center shadow-2xl"
+              className="relative overflow-hidden rounded-[24px] border border-base bg-panel p-10 text-center shadow-2xl"
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-[#12b3a8]/5 to-transparent pointer-events-none" />
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/[0.04] bg-[#0a0a0a] text-white/20 mb-6">
+              <div className="absolute inset-0 bg-gradient-to-b from-[var(--primary-2)]/5 to-transparent pointer-events-none" />
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-base bg-panel-2 text-dim mb-6">
                 <Users size={24} />
               </div>
               <h2 className="text-2xl font-bold tracking-tight text-white uppercase">
@@ -150,7 +150,7 @@ export default function FeedPage() {
               </p>
               <button
                 onClick={() => feed.refetch()}
-                className="mt-8 rounded-xl border border-[#12b3a8]/30 bg-[#0a0a0a] px-6 py-3 font-mono text-[10px] font-bold uppercase tracking-widest text-[#12b3a8] transition-all hover:border-[#12b3a8] hover:bg-[#12b3a8]/10 hover:shadow-[inset_0_0_15px_rgba(18,179,168,0.2)]"
+                className="mt-8 rounded-xl border border-[var(--primary-2)]/30 bg-panel-2 px-6 py-3 font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--primary-2)] transition-all hover:border-[var(--primary-2)] hover:bg-[var(--primary-2)]/10 hover:shadow-[inset_0_0_15px_rgba(18,179,168,0.2)]"
               >
                 Execute Re-Scan
               </button>
@@ -163,35 +163,35 @@ export default function FeedPage() {
           variants={fadeUp}
           className="hidden xl:flex flex-col gap-6"
         >
-          <div className="rounded-[24px] border border-white/[0.04] bg-[#050505] p-8">
-            <div className="flex items-center gap-2 text-[#12b3a8] text-[10px] font-mono tracking-[0.2em] uppercase mb-8">
+          <div className="rounded-[24px] border border-base bg-panel p-8">
+            <div className="flex items-center gap-2 text-[var(--primary-2)] text-[10px] font-mono tracking-[0.2em] uppercase mb-8">
               <Keyboard size={14} />
               <span>[ CONTROL_MAPPING ]</span>
             </div>
 
             <div className="space-y-4">
-              <div className="group/btn flex items-center justify-between rounded-xl border border-white/[0.04] bg-[#0a0a0a] px-5 py-4 transition hover:border-[#12b3a8]/50">
+              <div className="group/btn flex items-center justify-between rounded-xl border border-base bg-panel-2 px-5 py-4 transition hover:border-[var(--primary-2)]/50">
                 <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-white/60">
                   Connect
                 </span>
                 <div className="flex gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded border border-white/10 bg-[#000000] text-[10px] font-mono text-white/30 group-hover/btn:border-[#12b3a8]/40 group-hover/btn:text-[#12b3a8] transition-colors">
+                  <span className="flex h-6 w-6 items-center justify-center rounded border border-base bg-base text-[10px] font-mono text-white/30 group-hover/btn:border-[var(--primary-2)]/40 group-hover/btn:text-[var(--primary-2)] transition-colors">
                     K
                   </span>
-                  <span className="flex h-6 w-6 items-center justify-center rounded border border-white/10 bg-[#000000] text-[10px] font-mono text-white/30 group-hover/btn:border-[#12b3a8]/40 group-hover/btn:text-[#12b3a8] transition-colors">
+                  <span className="flex h-6 w-6 items-center justify-center rounded border border-base bg-base text-[10px] font-mono text-white/30 group-hover/btn:border-[var(--primary-2)]/40 group-hover/btn:text-[var(--primary-2)] transition-colors">
                     →
                   </span>
                 </div>
               </div>
-              <div className="group/btn flex items-center justify-between rounded-xl border border-white/[0.04] bg-[#0a0a0a] px-5 py-4 transition hover:border-red-500/30">
+              <div className="group/btn flex items-center justify-between rounded-xl border border-base bg-panel-2 px-5 py-4 transition hover:border-red-500/30">
                 <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-white/60">
                   Reject
                 </span>
                 <div className="flex gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded border border-white/10 bg-[#000000] text-[10px] font-mono text-white/30 group-hover/btn:border-red-500/40 group-hover/btn:text-red-400 transition-colors">
+                  <span className="flex h-6 w-6 items-center justify-center rounded border border-base bg-base text-[10px] font-mono text-white/30 group-hover/btn:border-red-500/40 group-hover/btn:text-red-400 transition-colors">
                     J
                   </span>
-                  <span className="flex h-6 w-6 items-center justify-center rounded border border-white/10 bg-[#000000] text-[10px] font-mono text-white/30 group-hover/btn:border-red-500/40 group-hover/btn:text-red-400 transition-colors">
+                  <span className="flex h-6 w-6 items-center justify-center rounded border border-base bg-base text-[10px] font-mono text-white/30 group-hover/btn:border-red-500/40 group-hover/btn:text-red-400 transition-colors">
                     ←
                   </span>
                 </div>
@@ -200,9 +200,9 @@ export default function FeedPage() {
           </div>
 
           {/* AI Hint Card */}
-          <div className="relative overflow-hidden rounded-[24px] border border-[#12b3a8]/20 bg-[#050505] p-8">
-            <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-[#12b3a8]/10 blur-[50px]" />
-            <div className="flex items-center gap-2 text-[#12b3a8] text-[10px] font-mono tracking-[0.2em] uppercase mb-4 relative z-10">
+          <div className="relative overflow-hidden rounded-[24px] border border-[var(--primary-2)]/20 bg-panel p-8">
+            <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-[var(--primary-2)]/10 blur-[50px]" />
+            <div className="flex items-center gap-2 text-[var(--primary-2)] text-[10px] font-mono tracking-[0.2em] uppercase mb-4 relative z-10">
               <Cpu size={14} />
               <span>[ AI_TELEMETRY ]</span>
             </div>

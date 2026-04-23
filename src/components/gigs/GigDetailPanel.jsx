@@ -40,8 +40,8 @@ function CommentBubble({ comment, isOwner, gigId, onDm, isDming }) {
         </div>
         <div className={`rounded-[14px] px-4 py-2.5 text-sm leading-relaxed ${
           isMe
-            ? "rounded-tr-sm bg-[#12b3a8]/15 border border-[#12b3a8]/20 text-white"
-            : "rounded-tl-sm bg-[#0d0d0d] border border-white/[0.06] text-white/80"
+            ? "rounded-tr-sm bg-[var(--primary-2)]/15 border border-[var(--primary-2)]/20 text-white"
+            : "rounded-tl-sm bg-panel border border-base text-white/80"
         }`}>
           {comment.text}
         </div>
@@ -50,10 +50,10 @@ function CommentBubble({ comment, isOwner, gigId, onDm, isDming }) {
           <button
             onClick={() => onDm(comment.author._id)}
             disabled={isDming}
-            className="flex items-center gap-1.5 rounded-lg border border-[#12b3a8]/20 bg-[#12b3a8]/5 px-2.5 py-1 transition hover:border-[#12b3a8]/50 hover:bg-[#12b3a8]/10 disabled:opacity-40"
+            className="flex items-center gap-1.5 rounded-lg border border-[var(--primary-2)]/20 bg-[var(--primary-2)]/5 px-2.5 py-1 transition hover:border-[var(--primary-2)]/50 hover:bg-[var(--primary-2)]/10 disabled:opacity-40"
           >
-            <MessageSquare size={10} className="text-[#12b3a8]" />
-            <span className="font-mono text-[8px] font-bold uppercase tracking-widest text-[#12b3a8]">
+            <MessageSquare size={10} className="text-[var(--primary-2)]" />
+            <span className="font-mono text-[8px] font-bold uppercase tracking-widest text-[var(--primary-2)]">
               {isDming ? "Opening..." : "DM"}
             </span>
           </button>
@@ -104,12 +104,12 @@ export default function GigDetailPanel({ gig, open, onClose, onApply, isApplying
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 320, damping: 32 }}
-            className="fixed right-0 top-0 z-[60] h-full w-full max-w-lg flex flex-col border-l border-white/[0.06] bg-[#050505] shadow-2xl"
+            className="fixed right-0 top-0 z-[60] h-full w-full max-w-lg flex flex-col border-l border-base bg-panel shadow-2xl"
           >
             {/* Header */}
             <div className="flex items-start justify-between gap-4 border-b border-white/[0.04] p-6">
               <div className="min-w-0">
-                <div className="flex items-center gap-2 text-[#12b3a8] text-[9px] font-mono tracking-[0.2em] uppercase mb-2">
+                <div className="flex items-center gap-2 text-[var(--primary-2)] text-[9px] font-mono tracking-[0.2em] uppercase mb-2">
                   <Code2 size={11} />
                   <span>[ BOUNTY_DETAIL ]</span>
                 </div>
@@ -117,7 +117,7 @@ export default function GigDetailPanel({ gig, open, onClose, onApply, isApplying
                   {gig.title}
                 </h2>
                 <div className="mt-2 flex items-center gap-3">
-                  <span className="font-mono text-[10px] font-bold text-[#12b3a8]">
+                  <span className="font-mono text-[10px] font-bold text-[var(--primary-2)]">
                     {formatBudget(gig.budget)}
                   </span>
                   <span className="text-white/20">·</span>
@@ -129,7 +129,7 @@ export default function GigDetailPanel({ gig, open, onClose, onApply, isApplying
               </div>
               <button
                 onClick={onClose}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-[#0a0a0a] text-white/40 hover:text-white transition"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-base bg-panel-2 text-dim hover:text-base transition"
               >
                 <X size={14} />
               </button>
@@ -151,7 +151,7 @@ export default function GigDetailPanel({ gig, open, onClose, onApply, isApplying
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {skills.map((s) => (
-                      <span key={s} className="rounded border border-white/5 bg-black px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-white/40">
+                      <span key={s} className="rounded border border-base bg-panel-2 px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-dim">
                         {s}
                       </span>
                     ))}
@@ -163,20 +163,20 @@ export default function GigDetailPanel({ gig, open, onClose, onApply, isApplying
               {!isOwner && (
                 <div className="border-t border-white/[0.04] pt-4">
                   {isApplied ? (
-                    <div className="flex items-center gap-2 rounded-xl border border-[#12b3a8]/30 bg-[#12b3a8]/5 px-4 py-3 w-fit">
-                      <CheckCircle size={14} className="text-[#12b3a8]" />
-                      <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#12b3a8]">Applied</span>
+                    <div className="flex items-center gap-2 rounded-xl border border-[var(--primary-2)]/30 bg-[var(--primary-2)]/5 px-4 py-3 w-fit">
+                      <CheckCircle size={14} className="text-[var(--primary-2)]" />
+                      <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--primary-2)]">Applied</span>
                     </div>
                   ) : (
                     <button
                       onClick={() => onApply(gig._id)}
                       disabled={isApplying}
-                      className="group flex items-center gap-2 rounded-xl border border-[#12b3a8]/30 bg-[#0a0a0a] px-5 py-3 transition-all hover:border-[#12b3a8] hover:bg-[#12b3a8]/10 hover:shadow-[0_0_15px_rgba(18,179,168,0.2)] disabled:opacity-50"
+                      className="group flex items-center gap-2 rounded-xl border border-[var(--primary-2)]/30 bg-panel-2 px-5 py-3 transition-all hover:border-[var(--primary-2)] hover:bg-[var(--primary-2)]/10 hover:shadow-[0_0_15px_rgba(18,179,168,0.2)] disabled:opacity-50"
                     >
-                      <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[#12b3a8]">
+                      <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-[var(--primary-2)]">
                         {isApplying ? "Executing..." : "Pull Branch"}
                       </span>
-                      {!isApplying && <ArrowRight size={13} className="text-[#12b3a8] transition-transform group-hover:translate-x-1" />}
+                      {!isApplying && <ArrowRight size={13} className="text-[var(--primary-2)] transition-transform group-hover:translate-x-1" />}
                     </button>
                   )}
                 </div>
@@ -231,12 +231,12 @@ export default function GigDetailPanel({ gig, open, onClose, onApply, isApplying
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Drop a comment..."
                 maxLength={500}
-                className="flex-1 rounded-xl border border-white/10 bg-[#0a0a0a] px-4 py-2.5 font-mono text-xs text-white placeholder:text-white/20 focus:border-[#12b3a8]/50 focus:outline-none transition-colors"
+                className="flex-1 rounded-xl border border-base bg-panel-2 px-4 py-2.5 font-mono text-xs text-base placeholder:text-dim focus:border-[var(--primary-2)]/50 focus:outline-none transition-colors"
               />
               <button
                 type="submit"
                 disabled={!text.trim() || postComment.isPending}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#12b3a8]/30 bg-[#0a0a0a] text-[#12b3a8] transition hover:border-[#12b3a8] hover:bg-[#12b3a8]/10 disabled:opacity-30"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--primary-2)]/30 bg-panel-2 text-[var(--primary-2)] transition hover:border-[var(--primary-2)] hover:bg-[var(--primary-2)]/10 disabled:opacity-30"
               >
                 <Send size={14} />
               </button>
