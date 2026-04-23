@@ -114,7 +114,12 @@ export default function LoginPage() {
               <div>
                 <div className="mb-2 flex items-center justify-between">
                   <label className="font-mono text-[10px] uppercase tracking-widest text-white/40">Password</label>
-                  <span className="font-mono text-[10px] text-[var(--primary-2)]">Required</span>
+                  <Link
+                    to="/forgot-password"
+                    className="font-mono text-[10px] text-[var(--primary-2)] hover:text-white transition-colors"
+                  >
+                    Forgot password?
+                  </Link>
                 </div>
                 <input type="password" placeholder="••••••••" {...register("password")} className="w-full rounded-xl border border-base bg-panel-2 px-4 py-3.5 text-sm text-base placeholder:text-dim focus:border-[var(--primary-2)]/50 focus:bg-[var(--primary-2)]/5 focus:outline-none transition-colors" />
                 {errors.password && <p className="mt-2 font-mono text-[10px] text-red-400">{errors.password.message}</p>}

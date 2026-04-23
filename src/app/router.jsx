@@ -5,6 +5,8 @@ import AppShell from "../components/layout/AppShell" // <-- Default
 import LandingPage from "../pages/LandingPage"
 import LoginPage from "../pages/LoginPage"
 import RegisterPage from "../pages/RegisterPage"
+import ForgotPasswordPage from "../pages/ForgotPasswordPage"
+import ResetPasswordPage from "../pages/ResetPasswordPage"
 import FeedPage from "../pages/FeedPage"
 import ConnectionsPage from "../pages/ConnectionsPage"
 import ChatPage from "../pages/ChatPage"
@@ -47,6 +49,14 @@ export const router = createBrowserRouter([
   {
     path: "/register",
     element: <RegisterPage />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: "/reset-password/:userId/:token",
+    element: <ResetPasswordPage />,
   },
   {
     element: <ProtectedRoute />,

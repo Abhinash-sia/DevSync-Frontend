@@ -63,6 +63,7 @@ export default function LandingPage() {
   const [mousePos, setMousePos]   = useState({ x: 0, y: 0 })
   const [telemetry, setTelemetry] = useState({ ping: 8, nodes: 1402, mem: "0x00F2" })
   const { isDark, toggleTheme } = useTheme()
+  const [initialDark] = useState(isDark)
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -309,7 +310,7 @@ export default function LandingPage() {
       </Suspense>
 
       {/* Boot curtain */}
-      {isDark && (
+      {initialDark && (
         <div className="screen-curtain fixed inset-0 z-[100] bg-[#000000] flex flex-col items-start justify-end p-10 font-mono text-[11px] uppercase tracking-widest text-[#12b3a8]/65">
           <p className="boot-text opacity-0 mb-1.5">[ OK ] INIT SYSTEM KERNEL...</p>
           <p className="boot-text opacity-0 mb-1.5">[ OK ] LOADING NEURAL GIMBAL...</p>

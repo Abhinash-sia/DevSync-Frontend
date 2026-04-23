@@ -88,3 +88,21 @@ export function useLogout() {
     },
   })
 }
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: async ({ email }) => {
+      const response = await api.post("/auth/forgot-password", { email })
+      return response.data
+    },
+  })
+}
+
+export function useResetPassword(userId, token) {
+  return useMutation({
+    mutationFn: async ({ password }) => {
+      const response = await api.post(`/auth/reset-password/${userId}/${token}`, { password })
+      return response.data
+    },
+  })
+}
