@@ -3,6 +3,7 @@ import { LogOut, Sun, Moon, TerminalSquare } from "lucide-react"
 import { authStore } from "../../stores/authStore"
 import { useLogout } from "../../hooks/useAuth"
 import { useTheme } from "../../hooks/useTheme"
+import NotificationDropdown from "../ui/NotificationDropdown"
 
 export default function Navbar() {
   const navigate = useNavigate()
@@ -47,6 +48,8 @@ export default function Navbar() {
         </Link>
 
         <div className="flex items-center gap-3">
+          <NotificationDropdown />
+          
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}

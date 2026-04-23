@@ -6,6 +6,7 @@ import MobileNav from "./MobileNav"
 import { useConnectionsRealtime } from "../../hooks/useConnections"
 import { useChatRealtime } from "../../hooks/useChatRoom"
 import GigApplicationToast from "../gigs/GigApplicationToast"
+import PlatformNotificationToast from "../ui/PlatformNotificationToast"
 import CursorSpotlight from "../ui/CursorSpotlight"
 
 export default function AppShell() {
@@ -45,6 +46,7 @@ export default function AppShell() {
 
       {/* Global gig-application notification toasts */}
       <GigApplicationToast />
+      <PlatformNotificationToast />
     </div>
   )
 }

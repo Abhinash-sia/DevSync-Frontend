@@ -1,12 +1,13 @@
 import { NavLink } from "react-router-dom"
 import { motion } from "framer-motion"
-import { Flame, Users, BriefcaseBusiness, User2, Command, TerminalSquare } from "lucide-react"
+import { Flame, Users, BriefcaseBusiness, User2, Command, TerminalSquare, Globe } from "lucide-react"
 
 const items = [
   { to: "/app/feed", label: "Discovery Feed", icon: Flame },
   { to: "/app/connections", label: "Connections", icon: Users },
   { to: "/app/gigs", label: "Gig Board", icon: BriefcaseBusiness },
   { to: "/app/profile", label: "My Profile", icon: User2 },
+  { to: "/app/directory", label: "User Directory", icon: Globe },
 ]
 
 export default function Sidebar() {

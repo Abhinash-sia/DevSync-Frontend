@@ -17,11 +17,12 @@ export default function SwipeCard({ profile, onSwipe, isTop = true }) {
   const nopeOpacity = useTransform(x, [-120, -20], [1, 0])
 
   const triggerSwipe = async (direction) => {
-    const targetX = direction === "interested" ? 420 : -420
+    const targetX = direction === "interested" ? 500 : -500
     await animate(x, targetX, {
       type: "spring",
-      stiffness: 260,
-      damping: 24,
+      stiffness: 150,
+      damping: 18,
+      mass: 0.8
     })
     onSwipe(direction)
   }
@@ -29,9 +30,11 @@ export default function SwipeCard({ profile, onSwipe, isTop = true }) {
   return (
     <motion.article
       drag={isTop ? "x" : false}
-      dragElastic={0.16}
-      dragMomentum
+      dragElastic={0.6}
+      dragMomentum={false}
       style={{ x, rotate }}
+      whileTap={{ cursor: "grabbing" }}
+      whileDrag={{ scale: 1.04, zIndex: 100 }}
       onDragEnd={(_, info) => {
         const shouldRight =
           info.offset.x > SWIPE_THRESHOLD || info.velocity.x > VELOCITY_THRESHOLD
@@ -43,20 +46,21 @@ export default function SwipeCard({ profile, onSwipe, isTop = true }) {
 
         animate(x, 0, {
           type: "spring",
-          stiffness: 320,
-          damping: 28,
+          stiffness: 300,
+          damping: 25,
+          mass: 1
         })
       }}
-      className="absolute inset-0 overflow-hidden rounded-[30px] border border-base bg-panel shadow-2xl transition hover:border-[var(--primary-2)] hover:shadow-[0_0_20px_rgba(18,179,168,0.2)]"
+      className="absolute inset-0 overflow-hidden rounded-[30px] border border-base bg-panel shadow-2xl transition hover:border-[var(--primary-2)] hover:shadow-[0_0_30px_rgba(18,179,168,0.15)] origin-bottom"
     >
       <div className="relative h-full">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(18,179,168,0.1),transparent_40%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(18,179,168,0.05),transparent_40%)]" />
 
-        <div className="relative h-[48svh] min-h-[300px] shrink-0 overflow-hidden border-b border-base">
+        <div className="relative h-[48svh] min-h-[300px] shrink-0 overflow-hidden border-b border-base bg-panel">
           <img
             src={
               profile.photoUrl ||
-              `https://api.dicebear.com/7.x/shapes/svg?seed=${profile.name || "dev"}`
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name || "D")}&background=0A0A0A&color=12b3a8&size=512&rounded=false&font-size=0.33`
             }
             alt={profile.name}
             className="h-full w-full object-cover"

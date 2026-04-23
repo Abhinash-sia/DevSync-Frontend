@@ -12,6 +12,8 @@ import ConnectionsPage from "../pages/ConnectionsPage"
 import ChatPage from "../pages/ChatPage"
 import GigsPage from "../pages/GigsPage"
 import ProfilePage from "../pages/ProfilePage"
+import DirectoryPage from "../pages/DirectoryPage"
+import PublicProfilePage from "../pages/PublicProfilePage"
 
 function RouteErrorBoundary() {
   const error = useRouteError()
@@ -89,6 +91,14 @@ export const router = createBrowserRouter([
           {
             path: "profile",
             element: <ProfilePage />,
+          },
+          {
+            path: "directory",
+            element: <DirectoryPage />,
+          },
+          {
+            path: "u/:userId",
+            element: <PublicProfilePage />,
           },
         ],
       },

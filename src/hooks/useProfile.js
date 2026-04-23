@@ -51,3 +51,14 @@ export function useUploadProfilePhoto() {
     },
   })
 }
+
+export function usePublicProfile(userId) {
+  return useQuery({
+    queryKey: ["publicProfile", userId],
+    queryFn: async () => {
+      const response = await api.get(`/profile/${userId}`)
+      return unwrap(response)?.user || unwrap(response)
+    },
+    enabled: !!userId,
+  })
+}

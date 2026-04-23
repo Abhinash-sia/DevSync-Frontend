@@ -4,6 +4,7 @@ import { initSocket, disconnectSocket } from "../lib/socket"
 import { useMatchStore } from "../stores/matchStore"
 import { authStore } from "../stores/authStore"
 import { useGigNotificationStore } from "../stores/gigNotificationStore"
+import { usePlatformNotificationStore } from "../stores/platformNotificationStore"
 
 export function useSocket() {
   const user = authStore((s) => s.user)
@@ -12,6 +13,7 @@ export function useSocket() {
   const setOnlineState = useMatchStore((s) => s.setOnlineState)
   const hydrateOnlineUsers = useMatchStore((s) => s.hydrateOnlineUsers)
   const addGigNotification = useGigNotificationStore((s) => s.addNotification)
+  const addPlatformNotification = usePlatformNotificationStore((s) => s.addPopup)
 
   useEffect(() => {
     if (!user?._id) return
@@ -61,6 +63,12 @@ export function useSocket() {
       }
     })
 
+    // ✅ Listen for generic platform notifications (like connection requests)
+    socket.on("new-notification", (payload) => {
+      addPlatformNotification(payload)
+      queryClient.invalidateQueries({ queryKey: ["notifications"] })
+    })
+
     socket.on("connect_error", (err) => {
       console.error("[Socket] Connection error:", err.message)
     })
@@ -71,8 +79,9 @@ export function useSocket() {
       socket.off("online-users")
       socket.off("gig-application")
       socket.off("gig-comment")
+      socket.off("new-notification")
       socket.off("connect_error")
       disconnectSocket()
     }
-  }, [user?._id, queryClient, setLastMatch, setOnlineState, hydrateOnlineUsers, addGigNotification])
+  }, [user?._id, queryClient, setLastMatch, setOnlineState, hydrateOnlineUsers, addGigNotification, addPlatformNotification])
 }
